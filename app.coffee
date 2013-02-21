@@ -17,11 +17,14 @@ Mongoose = require 'mongoose'
 #This is an example of importing one of our own files.
 #I am importing the UserController which I will then call
 #Methods on as I receive requests that pertain to the /users URI
-UserController = require './control/users'
+UserControllerModel = require './control/UserController'
+TagControllerModel = require './control/TagController'
+
 
 #This is the User model object.  It will handle putting stuff into the database
 #and will be used mainly by the UserController.
-User = require './model/User'
+UserModel = require './model/User'
+TagModel = require './model/Tag'
 
 mongomate = require("mongomate")('mongodb://localhost')
 
@@ -31,11 +34,11 @@ DB = process.env.DB || 'mongodb://localhost:27017/grocery'
 #This is creating a connection to the database
 db = Mongoose.createConnection DB
 
-user = User db
-userController = UserController user
+User = UserModel db
+UserController = UserControllerModel User
 
-tag = Tag db
-tagController = TagController tag
+Tag = TagModel db
+TagController = TagControllerModel Tag
 
 # This is the function that creates the server.
 # We will define endpoints and connect them up to 
@@ -58,18 +61,18 @@ exports.createServer = ->
 
   app.get '/users/auth/:user_id', (req, res) ->
     data = {user_id: req.query.user_id, token: req.query.token}
-    userController.authenticateUser data, res, (user)=>
+    UserController.authenticateUser data, res, (user)=>
       res.json user
 
-### User Endpoints ###
+  ### User Endpoints ###
   #GET endpoint for getting user by user_id
   app.get '/users/:user_id', (req, res) ->
-    userController.authenticateUser req, res, (user)=>
-      userController.getUser req, res
+    UserController.authenticateUser req, res, (user)=>
+      UserController.getUser req, res
   
   #This is the post endpoint where users will be created
   app.post '/users', (req, res) ->
-    userController.createUser req, res
+    UserController.createUser req, res
 
   #This is the put endpoint where users will be updated
   app.put '/users/:user_id', (req, res) ->
@@ -77,17 +80,17 @@ exports.createServer = ->
 
   #This is the delete endpoint where users will be deleted
   app.delete '/users/:user_id', (req, res) ->
-    userController.authenticateUser req, res, (user)=>
-      userController.deleteUser req, res
+    UserController.authenticateUser req, res, (user)=>
+      UserController.deleteUser req, res
 
-### Tag Endpoints ###
+  ### Tag Endpoints ###
   #Get all Tags and those associated with the user_id
   app.get '/tags/:user_id', (req, res) ->
-    tagController.getTags req, res
+    TagController.getTags req, res
 
   #Post endpoint for creating new tags
   app.post '/tags' , (req, res) ->
-    tagController.createTag req, res
+    TagController.createTag req, res
 
   #Put endpoint for updating tags
   app.put '/tags/:user_id', (req, res) ->
@@ -95,7 +98,7 @@ exports.createServer = ->
 
   #Delete endpoint for deleting tags
   app.delete '/tags/:user_id', (req, res) ->
-    tagController.deleteTag req, res
+    TagController.deleteTag req, res
 
 
   # final return of app object
