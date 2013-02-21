@@ -9,11 +9,11 @@ module.exports = (db) ->
 		tagId: String,
 		userId: String,
 		name: String,
-		relatedTags: [TAG],
-		parentTags: [TAG],
-		complimentTags: [TAG],
+		relatedTags: [Tag],
+		parentTags: [Tag],
+		complimentTags: [Tag],
 		lastUpdate: String
 	}
 
 	# This exports the schema
-	TAG = db.model "TAG", TagSchema
+	Tag = db.model "Tag", TagSchema

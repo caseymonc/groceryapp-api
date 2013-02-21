@@ -30,8 +30,12 @@ DB = process.env.DB || 'mongodb://localhost:27017/grocery'
 
 #This is creating a connection to the database
 db = Mongoose.createConnection DB
+
 user = User db
 userController = UserController user
+
+tag = Tag db
+tagController = TagController tag
 
 # This is the function that creates the server.
 # We will define endpoints and connect them up to 
@@ -57,14 +61,12 @@ exports.createServer = ->
     userController.authenticateUser data, res, (user)=>
       res.json user
 
-  #This is a simple endpoint that just returns a fake user
+### User Endpoints ###
+  #GET endpoint for getting user by user_id
   app.get '/users/:user_id', (req, res) ->
     userController.authenticateUser req, res, (user)=>
       userController.getUser req, res
   
-  app.get '/leckie/', (req, res) ->
-    res.json {user: "Leckie Gunter"}
-
   #This is the post endpoint where users will be created
   app.post '/users', (req, res) ->
     userController.createUser req, res
@@ -77,6 +79,23 @@ exports.createServer = ->
   app.delete '/users/:user_id', (req, res) ->
     userController.authenticateUser req, res, (user)=>
       userController.deleteUser req, res
+
+### Tag Endpoints ###
+  #Get all Tags and those associated with the user_id
+  app.get '/tags/:user_id', (req, res) ->
+    tagController.getTags req, res
+
+  #Post endpoint for creating new tags
+  app.post '/tags' , (req, res) ->
+    tagController.createTag req, res
+
+  #Put endpoint for updating tags
+  app.put '/tags/:user_id', (req, res) ->
+    res.json {success: true, code: 200}
+
+  #Delete endpoint for deleting tags
+  app.delete '/tags/:user_id', (req, res) ->
+    tagController.deleteTag req, res
 
 
   # final return of app object
