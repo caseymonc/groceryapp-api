@@ -1,5 +1,5 @@
-response = require('./response')()
-tokenGenerator = require('./token')()
+response = require('./ResponseMethods')()
+tokenGenerator = require('./TokenGenerator')()
 
 module.exports = (Tag) =>
 	errors =

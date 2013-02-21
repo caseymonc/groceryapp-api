@@ -5,7 +5,7 @@ Schema = mongoose.Schema
 # This is the constructor for the Item Schema
 module.exports = (db) ->
 
-	TagSchema = new Schema{
+	TagSchema = new Schema {
 		tagId: String,
 		userId: String,
 		name: String,
