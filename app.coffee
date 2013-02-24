@@ -74,6 +74,9 @@ exports.createServer = ->
   app.post '/users', (req, res) ->
     UserController.createUser req, res
 
+  app.post '/users/login', (req, res) ->
+    UserController.login req, res
+
   #This is the put endpoint where users will be updated
   app.put '/users/:user_id', (req, res) ->
     res.json {success: true, code: 200}

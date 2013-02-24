@@ -6,11 +6,24 @@ module.exports = (User) =>
 		USER_NOT_FOUND: 
 			error: true
 			message: "Not Found"
-			code: 401
+			code: 404
 		NOT_AUTHENTICATED: 
 			error: true
 			message: "Not Authenticated"
 			code: 401
+		ALREADY_EXISTS: 
+			error: true
+			message: "Conflict: Already Exists"
+			code: 409
+
+	login: (req, res)=>
+		email = req.body.email
+		password = req.body.password
+
+		User.getUser email, (err, user)=>
+			return res.json {error: true, message: err.message}, 500 if err?
+			return res.json normalize user if user?.password is password
+			return response.error errors.USER_NOT_FOUND, res
 
 	createUser: (req, res)=>
 		email = req.body.email
@@ -18,9 +31,10 @@ module.exports = (User) =>
 		
 		User.getUser email, (err, user)=>
 			return res.json {error: true, message: err.message}, 500 if err?
-			return res.json normalize user if user?.password is password
+			return response.error errors.ALREADY_EXISTS, res if user?
 			
 			body = req.body
+			body.points = 0
 			body.token = tokenGenerator.generateToken()
 			user = new User body
 			user.save (err) =>
@@ -81,6 +95,8 @@ base = ()-> [
       'user_id'
       'email'
       'token'
+      'username'
+      'points'
   ]
 
 normalize = (user) ->
